@@ -1,0 +1,221 @@
+.map-section {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    margin: 2rem 0;
+}
+
+.map-section h2 {
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.map-description {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    font-size: 1rem;
+}
+
+.realms-map {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-top: 1.5rem;
+}
+
+.realm-card {
+    background: white;
+    border-radius: 12px;
+    border: 3px solid;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.realm-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.realm-card.locked {
+    opacity: 0.6;
+    filter: grayscale(50%);
+}
+
+.realm-header {
+    padding: 1.5rem;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.realm-icon {
+    font-size: 3rem;
+    background: rgba(255, 255, 255, 0.2);
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.realm-title h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: white;
+}
+
+.realm-title p {
+    margin: 0.25rem 0 0 0;
+    font-size: 0.875rem;
+    opacity: 0.9;
+}
+
+.realm-content {
+    padding: 1.5rem;
+}
+
+.realm-level {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.level-label {
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.level-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.realm-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.progress-section h4 {
+    margin: 0 0 0.75rem 0;
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.tasks-container {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
+.task-item {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+    border: 2px solid transparent;
+}
+
+.task-item:hover {
+    transform: scale(1.1);
+}
+
+.task-item.completed {
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.task-icon {
+    font-size: 1.25rem;
+    filter: brightness(0) invert(1);
+}
+
+.exam-container {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.exam-item {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+    border: 3px solid;
+    border-color: #dc2626;
+}
+
+.exam-item.completed {
+    border-color: #991b1b;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.exam-item.locked {
+    border-color: #9ca3af;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.exam-item:not(.locked):hover {
+    transform: scale(1.1);
+}
+
+.exam-icon {
+    font-size: 1.5rem;
+    filter: brightness(0) invert(1);
+}
+
+.progress-text {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0.5rem 0 0 0;
+    font-weight: 500;
+}
+
+.realm-button {
+    width: 100%;
+    padding: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    transition: all 0.3s;
+}
+
+.realm-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+    .realms-map {
+        grid-template-columns: 1fr;
+    }
+    
+    .realm-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .realm-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 2.5rem;
+    }
+}
+

@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}Tienda - MathGame{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/shop.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h1>Tienda 🛒</h1>
+    <div class="coins-display">
+        <h2>Tus Monedas: 🪙 {{ user_stats.coins }}</h2>
+    </div>
+
+    <!-- Vista previa del avatar -->
+    <div class="avatar-preview-section">
+        <h2>Tu Avatar</h2>
+        <div class="avatar-preview">
+            <div class="avatar-display" id="avatar-display">
+                <div class="avatar-face">{{ categories.face[0].icon if categories.face else '😊' }}</div>
+                <div class="avatar-hair">{{ categories.hair[0].icon if categories.hair else '👤' }}</div>
+                {% if user_avatar.accessory %}
+                <div class="avatar-accessory">{{ categories.accessory[0].icon if categories.accessory else '' }}</div>
+                {% endif %}
+            </div>
+            <div class="avatar-customize">
+                <h3>Personalizar</h3>
+                <div class="avatar-options">
+                    <select id="face-select" class="avatar-select">
+                        {% for item in items %}
+                        {% if item.category == 'face' and (item.owned or item.id == 'face_happy') %}
+                        <option value="{{ item.id }}" {% if user_avatar.face == item.id %}selected{% endif %}>{{ item.icon }} {{ item.name }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                    <select id="hair-select" class="avatar-select">
+                        {% for item in items %}
+                        {% if item.category == 'hair' and (item.owned or item.id == 'hair_short') %}
+                        <option value="{{ item.id }}" {% if user_avatar.hair == item.id %}selected{% endif %}>{{ item.icon }} {{ item.name }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                    <select id="clothes-select" class="avatar-select">
+                        {% for item in items %}
+                        {% if item.category == 'clothes' and (item.owned or item.id == 'clothes_tshirt') %}
+                        <option value="{{ item.id }}" {% if user_avatar.clothes == item.id %}selected{% endif %}>{{ item.icon }} {{ item.name }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                    <select id="accessory-select" class="avatar-select">
+                        <option value="">Sin accesorio</option>
+                        {% for item in items %}
+                        {% if item.category == 'accessory' and item.owned %}
+                        <option value="{{ item.id }}" {% if user_avatar.accessory == item.id %}selected{% endif %}>{{ item.icon }} {{ item.name }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                    <button class="btn btn-primary" onclick="updateAvatar()">Aplicar Cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Caras -->
+    <div class="shop-categories">
+        <h2>😊 Caras</h2>
+        <div class="shop-items">
+            {% for item in items %}
+            {% if item.category == 'face' %}
+            <div class="shop-item {% if item.owned %}owned{% endif %}">
+                <div class="item-icon-large">{{ item.icon }}</div>
+                <h3>{{ item.name }}</h3>
+                <p class="item-price">{{ item.price }} 🪙</p>
+                {% if item.owned %}
+                <button class="btn btn-secondary" disabled>Ya lo tienes</button>
+                {% else %}
+                <button class="btn btn-primary" onclick="purchaseItem('{{ item.id }}')">Comprar</button>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Peinados -->
+    <div class="shop-categories">
+        <h2>💇 Peinados</h2>
+        <div class="shop-items">
+            {% for item in items %}
+            {% if item.category == 'hair' %}
+            <div class="shop-item {% if item.owned %}owned{% endif %}">
+                <div class="item-icon-large">{{ item.icon }}</div>
+                <h3>{{ item.name }}</h3>
+                <p class="item-price">{{ item.price }} 🪙</p>
+                {% if item.owned %}
+                <button class="btn btn-secondary" disabled>Ya lo tienes</button>
+                {% else %}
+                <button class="btn btn-primary" onclick="purchaseItem('{{ item.id }}')">Comprar</button>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Ropa -->
+    <div class="shop-categories">
+        <h2>👕 Ropa</h2>
+        <div class="shop-items">
+            {% for item in items %}
+            {% if item.category == 'clothes' %}
+            <div class="shop-item {% if item.owned %}owned{% endif %}">
+                <div class="item-icon-large">{{ item.icon }}</div>
+                <h3>{{ item.name }}</h3>
+                <p class="item-price">{{ item.price }} 🪙</p>
+                {% if item.owned %}
+                <button class="btn btn-secondary" disabled>Ya lo tienes</button>
+                {% else %}
+                <button class="btn btn-primary" onclick="purchaseItem('{{ item.id }}')">Comprar</button>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Accesorios -->
+    <div class="shop-categories">
+        <h2>🎩 Accesorios</h2>
+        <div class="shop-items">
+            {% for item in items %}
+            {% if item.category == 'accessory' %}
+            <div class="shop-item {% if item.owned %}owned{% endif %}">
+                <div class="item-icon-large">{{ item.icon }}</div>
+                <h3>{{ item.name }}</h3>
+                <p class="item-price">{{ item.price }} 🪙</p>
+                {% if item.owned %}
+                <button class="btn btn-secondary" disabled>Ya lo tienes</button>
+                {% else %}
+                <button class="btn btn-primary" onclick="purchaseItem('{{ item.id }}')">Comprar</button>
+                {% endif %}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Power-ups -->
+    <div class="shop-categories">
+        <h2>⚡ Power-ups</h2>
+        <div class="shop-items">
+            {% for item in items %}
+            {% if item.category == 'powerup' %}
+            <div class="shop-item">
+                <div class="item-icon-large">{{ item.icon }}</div>
+                <h3>{{ item.name }}</h3>
+                <p>{{ item.description if item.description else 'Power-up para ayudarte' }}</p>
+                <p class="item-price">{{ item.price }} 🪙</p>
+                <button class="btn btn-primary" onclick="purchaseItem('{{ item.id }}')">Comprar</button>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+function purchaseItem(itemId) {
+    if (!confirm('¿Estás seguro de que quieres comprar este item?')) {
+        return;
+    }
+    
+    fetch('/shop/purchase', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ item_id: itemId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            location.reload();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al comprar el item');
+    });
+}
+
+function updateAvatar() {
+    const face = document.getElementById('face-select').value;
+    const hair = document.getElementById('hair-select').value;
+    const clothes = document.getElementById('clothes-select').value;
+    const accessory = document.getElementById('accessory-select').value;
+    
+    fetch('/shop/avatar/update', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ face, hair, clothes, accessory })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Avatar actualizado!');
+            location.reload();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error al actualizar el avatar');
+    });
+}
+</script>
+{% endblock %}

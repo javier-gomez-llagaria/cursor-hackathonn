@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Resolver Problema - MathGame{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/problem.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="problem-container">
+    <div class="problem-header">
+        <div class="problem-info">
+            <span class="topic-badge">{{ problem.topic|title }}</span>
+            <span class="difficulty-badge">Dificultad: {{ problem.difficulty }}</span>
+        </div>
+        <div class="problem-timer" id="timer">⏱️ --:--</div>
+    </div>
+
+    <div class="problem-card">
+        <h2 class="problem-text">{{ problem.problem_text }}</h2>
+        
+        <div class="problem-options" id="options-container">
+            {% if problem.options %}
+                {% for option in problem.options %}
+                <button class="option-btn" data-answer="{{ option }}">
+                    {{ option }}
+                </button>
+                {% endfor %}
+            {% else %}
+                <div class="answer-input">
+                    <input type="number" id="answer-input" step="any" placeholder="Ingresa tu respuesta">
+                    <button class="btn btn-primary" id="submit-answer">Enviar</button>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="problem-actions">
+            <button class="btn btn-secondary" id="hint-btn">💡 Pista (-50% XP)</button>
+            <button class="btn btn-secondary" id="skip-btn">⏭️ Saltar</button>
+        </div>
+    </div>
+
+    <div class="problem-feedback" id="feedback" style="display: none;">
+        <div class="feedback-content">
+            <h3 id="feedback-title"></h3>
+            <p id="feedback-message"></p>
+            <div id="feedback-rewards"></div>
+            <div id="feedback-badges"></div>
+            <button class="btn btn-primary" id="next-problem">Siguiente Problema</button>
+        </div>
+    </div>
+
+    <div class="confetti-container" id="confetti"></div>
+</div>
+
+<script>
+    const problemData = {{ problem|tojson }};
+    const solution = "{{ problem.solution }}";
+    let startTime = Date.now();
+    let usedHint = false;
+</script>
+<script src="{{ url_for('static', filename='js/problem.js') }}"></script>
+<script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+{% endblock %}
+

@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - MathGame{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/map.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>¡Bienvenido, {{ user.username }}! 👋</h1>
+        <div class="user-avatar">
+            {% if user_avatar and categories %}
+            <div class="avatar-placeholder" style="font-size: 3rem;" id="avatar-preview">
+                😊👤
+            </div>
+            {% else %}
+            <div class="avatar-placeholder">👤</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-info">
+                <h3>Nivel {{ user_stats.level }}</h3>
+                <div class="xp-bar-container">
+                    <div class="xp-bar" style="width: {{ (user_stats.xp_progress / user_stats.xp_for_next_level * 100) if user_stats.xp_for_next_level > 0 else 0 }}%"></div>
+                </div>
+                <p>{{ user_stats.xp_progress }} / {{ user_stats.xp_for_next_level }} XP</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">🪙</div>
+            <div class="stat-info">
+                <h3>{{ user_stats.coins }} Monedas</h3>
+                <p>Gastadas en la tienda</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-info">
+                <h3>Racha: {{ user_stats.streak }} días</h3>
+                <p>¡Sigue así!</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon">📊</div>
+            <div class="stat-info">
+                <h3>{{ user_stats.accuracy }}% Precisión</h3>
+                <p>{{ user_stats.correct_problems }} / {{ user_stats.total_problems }} problemas</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mapa de Reinos -->
+    <div class="map-section">
+        <h2>🗺️ Mapa de Reinos</h2>
+        <p class="map-description">Explora los reinos matemáticos y completa niveles para avanzar</p>
+        
+        <div class="realms-map">
+            {% for realm_id, realm in realms_progress.items() %}
+            <div class="realm-card {% if not realm.unlocked %}locked{% endif %}" style="border-color: {{ realm.color }};">
+                <div class="realm-header" style="background: linear-gradient(135deg, {{ realm.color }}, {{ realm.color }}dd);">
+                    <div class="realm-icon">{{ realm.icon }}</div>
+                    <div class="realm-title">
+                        <h3>{{ realm.name }}</h3>
+                        <p>{{ realm.description }}</p>
+                    </div>
+                </div>
+                
+                <div class="realm-content">
+                    <div class="realm-level">
+                        <span class="level-label">Nivel:</span>
+                        <span class="level-number">{{ realm.level }} / 10</span>
+                    </div>
+                    
+                    <div class="realm-progress">
+                        <div class="progress-section">
+                            <h4>Tareas</h4>
+                            <div class="tasks-container">
+                                {% for i in range(realm.tasks_total) %}
+                                <div class="task-item {% if i < realm.tasks_completed %}completed{% endif %}" 
+                                     style="background: {% if i < realm.tasks_completed %}{{ realm.color }}{% else %}#e5e7eb{% endif %};">
+                                    <span class="task-icon">📝</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            <p class="progress-text">{{ realm.tasks_completed }} / {{ realm.tasks_total }} completadas</p>
+                        </div>
+                        
+                        <div class="progress-section">
+                            <h4>Examen</h4>
+                            <div class="exam-container">
+                                <div class="exam-item {% if realm.exams_completed %}completed{% endif %} {% if not (realm.tasks_completed >= realm.tasks_total) %}locked{% endif %}"
+                                     style="background: {% if realm.exams_completed %}#ef4444{% elif realm.tasks_completed >= realm.tasks_total %}#fca5a5{% else %}#e5e7eb{% endif %};">
+                                    <span class="exam-icon">📋</span>
+                                </div>
+                            </div>
+                            <p class="progress-text">
+                                {% if realm.exams_completed %}
+                                    ✅ Completado
+                                {% elif realm.tasks_completed >= realm.tasks_total %}
+                                    🔓 Disponible
+                                {% else %}
+                                    🔒 Bloqueado
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <a href="{{ url_for('problem', topic=realm_id) }}" class="btn btn-primary realm-button" 
+                       style="background: {{ realm.color }}; border-color: {{ realm.color }};">
+                        Practicar
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="dashboard-section">
+            <h2>🎯 Misiones Activas</h2>
+            {% if missions %}
+                <div class="missions-list">
+                    {% for mission in missions %}
+                    <div class="mission-item">
+                        <h4>{{ mission.name }}</h4>
+                        <p>{{ mission.description }}</p>
+                        <div class="mission-progress">
+                            <div class="progress-bar">
+                                {% set required = mission.requirement.split('_')[-1] if '_' in mission.requirement else mission.requirement %}
+                                {% set required_int = required|int %}
+                                {% set progress_pct = (mission.progress / required_int * 100) if required_int > 0 else 0 %}
+                                <div class="progress-fill" style="width: {{ progress_pct }}%"></div>
+                            </div>
+                            <span>{{ mission.progress }} / {{ required }}</span>
+                        </div>
+                        <div class="mission-rewards">
+                            {% if mission.reward_xp %}<span>+{{ mission.reward_xp }} XP</span>{% endif %}
+                            {% if mission.reward_coins %}<span>+{{ mission.reward_coins }} 🪙</span>{% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No hay misiones activas en este momento.</p>
+            {% endif %}
+        </div>
+
+        <div class="dashboard-section">
+            <h2>🏆 Últimos Logros</h2>
+            {% if recent_badges %}
+                <div class="badges-grid">
+                    {% for badge in recent_badges[:6] %}
+                    <div class="badge-item">
+                        <div class="badge-icon">{{ badge.icon }}</div>
+                        <p>{{ badge.name }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>Aún no has obtenido logros. ¡Resuelve problemas para ganarlos!</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

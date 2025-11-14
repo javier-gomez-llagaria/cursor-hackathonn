@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Progreso - MathGame{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h1>Mi Progreso</h1>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Problemas Totales</h3>
+            <p class="stat-number">{{ user_stats.total_problems }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Problemas Correctos</h3>
+            <p class="stat-number">{{ user_stats.correct_problems }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Precisión</h3>
+            <p class="stat-number">{{ user_stats.accuracy }}%</p>
+        </div>
+        <div class="stat-card">
+            <h3>Logros Obtenidos</h3>
+            <p class="stat-number">{{ user_stats.total_badges }}</p>
+        </div>
+    </div>
+
+    <div class="progress-section">
+        <h2>Rendimiento por Tema</h2>
+        <div class="topics-stats">
+            {% for stat in topic_stats %}
+            <div class="topic-stat-card">
+                <h3>{{ stat.topic|title }}</h3>
+                <div class="topic-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ stat.accuracy }}%"></div>
+                    </div>
+                    <p>Precisión: {{ stat.accuracy }}%</p>
+                    <p>Intentos: {{ stat.total_attempts }}</p>
+                    <p>Correctos: {{ stat.correct_attempts }}</p>
+                    <p>Dificultad actual: {{ stat.difficulty }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

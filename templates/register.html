@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Registrarse - MathGame{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <h1>Crear Cuenta</h1>
+        <form method="POST" action="{{ url_for('register') }}" class="auth-form">
+            <div class="form-group">
+                <label for="username">Usuario</label>
+                <input type="text" id="username" name="username" required autofocus>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" required minlength="6">
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">Confirmar Contraseña</label>
+                <input type="password" id="confirm_password" name="confirm_password" required minlength="6">
+            </div>
+            <button type="submit" class="btn btn-primary">Registrarse</button>
+        </form>
+        <div style="margin: 1.5rem 0; text-align: center;">
+            <p style="margin: 1rem 0; color: #6b7280;">or</p>
+            <a href="{{ url_for('guest_login') }}" class="btn btn-secondary" style="width: 100%;">
+                🎮 Continue as Guest
+            </a>
+            <p style="margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280;">
+                Try the app without signing up
+            </p>
+        </div>
+        <p class="auth-link">
+            ¿Ya tienes cuenta? <a href="{{ url_for('login') }}">Inicia sesión aquí</a>
+        </p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm_password').value;
+        
+        if (password !== confirmPassword) {
+            e.preventDefault();
+            alert('Las contraseñas no coinciden');
+        }
+    });
+</script>
+{% endblock %}
+

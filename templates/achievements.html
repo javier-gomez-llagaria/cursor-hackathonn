@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Logros - MathGame{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h1>Mis Logros 🏆</h1>
+
+    <div class="badges-container">
+        <h2>Badges Obtenidos ({{ badges|length }})</h2>
+        <div class="badges-grid-large">
+            {% for badge in badges %}
+            <div class="badge-card">
+                <div class="badge-icon-large">{{ badge.icon }}</div>
+                <h3>{{ badge.name }}</h3>
+                <p>{{ badge.description }}</p>
+                <small>Obtenido: {{ badge.earned_at[:10] }}</small>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if badges|length == 0 %}
+    <div class="empty-state">
+        <p>¡Aún no has obtenido logros! Resuelve problemas para ganarlos.</p>
+        <a href="{{ url_for('problem') }}" class="btn btn-primary">Comenzar a Resolver</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+

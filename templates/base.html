@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MathGame - Aprende Matemáticas{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="logo">📐</span>
+                <span class="brand-name">MathGame</span>
+            </div>
+            {% if session.user_id %}
+            <div class="nav-user-info">
+                {% if session.is_guest %}
+                <span style="background: #f59e0b; color: white; padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.875rem; margin-right: 1rem;">👤 Guest</span>
+                {% endif %}
+                <span class="user-level">Nivel {{ user_stats.level if user_stats else 1 }}</span>
+                <span class="user-xp">{{ user_stats.xp if user_stats else 0 }} XP</span>
+                <span class="user-coins">🪙 {{ user_stats.coins if user_stats else 0 }}</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('problem') }}">Resolver Problema</a></li>
+                <li><a href="{{ url_for('progress') }}">Progreso</a></li>
+                <li><a href="{{ url_for('achievements') }}">Logros</a></li>
+                <li><a href="{{ url_for('shop') }}">Tienda</a></li>
+                <li><a href="{{ url_for('leaderboard') }}">Clasificación</a></li>
+                <li><a href="{{ url_for('logout') }}">Salir</a></li>
+            </ul>
+            {% else %}
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('login') }}">Iniciar Sesión</a></li>
+                <li><a href="{{ url_for('register') }}">Registrarse</a></li>
+            </ul>
+            {% endif %}
+        </div>
+    </nav>
+
+    <main class="main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2024 MathGame - Aprende Matemáticas de forma divertida</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
+
